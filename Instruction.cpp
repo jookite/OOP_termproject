@@ -1,7 +1,7 @@
 #include "Instruction.h"
 #include "VMContext.h"
 #include <iostream>
-#include <cstdlib> // for exit()
+#include <cstdlib>
 
 // ======================================================
 // [Helper] 공통 검증 및 값 추출기
@@ -40,7 +40,7 @@ namespace InstHelper {
     unsigned char getTargetValue(VMContext& ctx, const char* name, unsigned char flag, unsigned char operand) {
         if (flag == VMDefs::FLAG_REG_ONLY) return ctx.getRegisterValue(operand);
         if (flag == VMDefs::FLAG_VAL_ONLY) return operand;
-        error(name, flag); // 00, 01은 에러
+        error(name, flag);
         return 0;
     }
 }
@@ -51,10 +51,8 @@ namespace InstHelper {
 // ======================================================
 
 void OpMOV::execute(VMContext& context) {
-    // 1. 검증 및 값 추출 (단 한 줄로 처리)
     unsigned char srcVal = InstHelper::getBinarySrc(context, "MOV", m_flag, m_src);
 
-    // 2. 핵심 로직
     context.setRegisterValue(m_dest, srcVal);
 }
 
@@ -68,7 +66,7 @@ void OpADD::execute(VMContext& context) {
     context.setRegisterValue(VMDefs::REG_ZF, ((unsigned char)result == 0) ? 1 : 0);
     context.setRegisterValue(VMDefs::REG_CF, (result > 255) ? 1 : 0);
 
-    // 오버플로우 체크 로직 (생략 없이 유지)
+    // 오버플로우 체크
     int8_t s_val1 = (int8_t)val1;
     int8_t s_val2 = (int8_t)val2;
     int8_t s_result = (int8_t)result;
@@ -115,18 +113,17 @@ void OpCMP::execute(VMContext& context) {
 
 // ======================================================
 // 2. 스택 명령어 (PUSH, POP)
-// 코드 구조: Flag 검증 -> 핵심 로직
 // ======================================================
 
 void OpPUSH::execute(VMContext& context) {
-    InstHelper::validateRegOnly("PUSH", m_flag); // Flag가 10이 아니면 종료
+    InstHelper::validateRegOnly("PUSH", m_flag);
 
     unsigned char val = context.getRegisterValue(m_dest);
     context.pushStack(val);
 }
 
 void OpPOP::execute(VMContext& context) {
-    InstHelper::validateRegOnly("POP", m_flag); // Flag가 10이 아니면 종료
+    InstHelper::validateRegOnly("POP", m_flag);
 
     unsigned char val = context.popStack();
     context.setRegisterValue(m_dest, val);
@@ -135,7 +132,6 @@ void OpPOP::execute(VMContext& context) {
 
 // ======================================================
 // 3. 분기 및 출력 명령어 (JMP, BE, BNE, PRINT)
-// 코드 구조: 타겟 값 추출 -> 분기/출력
 // ======================================================
 
 void OpJMP::execute(VMContext& context) {
