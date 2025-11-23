@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iomanip>
 
-// 생성자
 VMContext::VMContext() {
     m_registers[VMDefs::REG_R0] = 0;
     m_registers[VMDefs::REG_R1] = 0;
@@ -18,7 +17,6 @@ VMContext::VMContext() {
     m_stack.resize(256, 0);
 }
 
-// 바이너리 코드 로드
 bool VMContext::loadCode(const std::string& filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
@@ -38,7 +36,6 @@ bool VMContext::loadCode(const std::string& filename) {
     }
     file.close();
 
-    // 명령어 하나가 4바이트이므로 반드시 4의 배수여야 함
     if (m_code.size() % 4 != 0) {
         std::cerr << "Error: code size is not multiple of 4 bytes" << std::endl;
         return false;
@@ -47,7 +44,6 @@ bool VMContext::loadCode(const std::string& filename) {
     return true;
 }
 
-// 실행 루프
 void VMContext::runCode() {
     unsigned char& pc = m_registers[VMDefs::REG_PC];
     pc = 0;
@@ -77,7 +73,6 @@ void VMContext::runCode() {
     }
 }
 
-// 32비트 단어를 Instruction 객체로 변환
 Instruction* VMContext::parseInstruction(uint32_t word) {
     unsigned char opcode = (word >> 26) & 0x3F;
     unsigned char flag = (word >> 24) & 0x03;
@@ -101,7 +96,7 @@ Instruction* VMContext::parseInstruction(uint32_t word) {
     }
 }
 
-// 레지스터/스택 헬퍼들
+
 unsigned char VMContext::getRegisterValue(unsigned char regID) {
     if (m_registers.count(regID)) return m_registers[regID];
     return 0;

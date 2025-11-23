@@ -15,11 +15,9 @@ public:
     bool loadCode(const std::string& filename);
     void runCode();
 
-    // Registers
     unsigned char getRegisterValue(unsigned char regID);
     void setRegisterValue(unsigned char regID, unsigned char value);
 
-    // Stack
     void pushStack(unsigned char value);
     unsigned char popStack();
     unsigned char getStackValue(unsigned char index);
@@ -32,4 +30,4 @@ private:
     std::vector<unsigned char> m_code;
 };
 
-#endif // VMCONTEXT_H
+#endif
