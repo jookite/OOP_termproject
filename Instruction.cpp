@@ -15,7 +15,7 @@ namespace InstHelper {
         exit(1);
     }
 
-    // [Group A] 이항 연산용 (MOV, ADD, SUB...)
+    // 이항 연산
     // 허용: 00(REG_REG), 01(REG_VAL)
     // 역할: 두 번째 피연산자(Source)의 실제 값을 가져옴
     unsigned char getBinarySrc(VMContext& ctx, const char* name, unsigned char flag, unsigned char src) {
@@ -25,7 +25,7 @@ namespace InstHelper {
         return 0;
     }
 
-    // [Group B] 스택용 (PUSH, POP)
+    // 스택
     // 허용: 10(REG_ONLY)
     // 역할: 단순히 Flag가 레지스터 전용인지 확인
     void validateRegOnly(const char* name, unsigned char flag) {
@@ -34,7 +34,7 @@ namespace InstHelper {
         }
     }
 
-    // [Group C] 분기/출력용 (JMP, PRINT...)
+    // 분기/출력
     // 허용: 10(REG_ONLY), 11(VAL_ONLY)
     // 역할: 점프할 주소나 출력할 값을 가져옴
     unsigned char getTargetValue(VMContext& ctx, const char* name, unsigned char flag, unsigned char operand) {
@@ -43,6 +43,17 @@ namespace InstHelper {
         error(name, flag);
         return 0;
     }
+
+    // overflow check(ADD)
+    bool checkAddOverflow(int8_t a, int8_t b, int8_t res) {
+        return (a > 0 && b > 0 && res < 0) || (a < 0 && b < 0 && res > 0);
+    }
+
+    //overflow check(SUB)
+    bool checkSubOverflow(int8_t a, int8_t b, int8_t res) {
+        return (a > 0 && b < 0 && res < 0) || (a < 0 && b > 0 && res > 0);
+    }
+
 }
 
 // ======================================================
@@ -52,7 +63,6 @@ namespace InstHelper {
 
 void OpMOV::execute(VMContext& context) {
     unsigned char srcVal = InstHelper::getBinarySrc(context, "MOV", m_flag, m_src);
-
     context.setRegisterValue(m_dest, srcVal);
 }
 
@@ -66,11 +76,8 @@ void OpADD::execute(VMContext& context) {
     context.setRegisterValue(VMDefs::REG_ZF, ((unsigned char)result == 0) ? 1 : 0);
     context.setRegisterValue(VMDefs::REG_CF, (result > 255) ? 1 : 0);
 
-    // 오버플로우 체크
-    int8_t s_val1 = (int8_t)val1;
-    int8_t s_val2 = (int8_t)val2;
-    int8_t s_result = (int8_t)result;
-    bool ovf = (s_val1 > 0 && s_val2 > 0 && s_result < 0) || (s_val1 < 0 && s_val2 < 0 && s_result > 0);
+    
+    bool ovf = InstHelper::checkAddOverflow((int8_t)val1, (int8_t)val2, (int8_t)result);
     context.setRegisterValue(VMDefs::REG_OF, ovf ? 1 : 0);
 }
 
@@ -84,10 +91,8 @@ void OpSUB::execute(VMContext& context) {
     context.setRegisterValue(VMDefs::REG_ZF, ((unsigned char)result == 0) ? 1 : 0);
     context.setRegisterValue(VMDefs::REG_CF, (val1 < val2) ? 1 : 0);
 
-    int8_t s_val1 = (int8_t)val1;
-    int8_t s_val2 = (int8_t)val2;
-    int8_t s_result = (int8_t)result;
-    bool ovf = (s_val1 > 0 && s_val2 < 0 && s_result < 0) || (s_val1 < 0 && s_val2 > 0 && s_result > 0);
+  
+    bool ovf = InstHelper::checkSubOverflow((int8_t)val1, (int8_t)val2, (int8_t)result);
     context.setRegisterValue(VMDefs::REG_OF, ovf ? 1 : 0);
 }
 
