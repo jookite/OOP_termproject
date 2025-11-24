@@ -1,10 +1,10 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
 
-class VMContext;  // forward declaration
+class VMContext;
 
 namespace VMDefs {
-    // 2-3. Registers
+    // Registers
     const unsigned char REG_R0 = 0x01;
     const unsigned char REG_R1 = 0x02;
     const unsigned char REG_R2 = 0x03;
@@ -15,7 +15,7 @@ namespace VMDefs {
     const unsigned char REG_CF = 0x08;
     const unsigned char REG_OF = 0x09;
 
-    // 2-4. Opcodes
+    // Opcodes
     const unsigned char OP_MOV = 0x01;
     const unsigned char OP_ADD = 0x02;
     const unsigned char OP_SUB = 0x03;
@@ -28,14 +28,14 @@ namespace VMDefs {
     const unsigned char OP_BNE = 0x0A;
     const unsigned char OP_PRINT = 0x0B;
 
-    // 2-5. Flags
-    const unsigned char FLAG_REG_REG = 0x00;  // 두 피연산자 모두 레지스터
-    const unsigned char FLAG_REG_VAL = 0x01;  // dest = Reg, src = imm
-    const unsigned char FLAG_REG_ONLY = 0x02; // 단일 Reg
-    const unsigned char FLAG_VAL_ONLY = 0x03; // 단일 imm
+    // Flags
+    const unsigned char FLAG_REG_REG = 0x00;  // [Register, Register]
+    const unsigned char FLAG_REG_VAL = 0x01;  // [Register, Value]
+    const unsigned char FLAG_REG_ONLY = 0x02; // [Register]
+    const unsigned char FLAG_VAL_ONLY = 0x03; // [Value]
 }
 
-// Command 인터페이스
+// Command Interface
 class Instruction {
 public:
     Instruction(unsigned char flag, unsigned char src, unsigned char dest)
@@ -51,7 +51,7 @@ protected:
     unsigned char m_dest;
 };
 
-// 각 구체 명령어들
+// Method
 class OpMOV : public Instruction {
 public:
     OpMOV(unsigned char flag, unsigned char src, unsigned char dest)
@@ -140,4 +140,4 @@ public:
     void execute(VMContext& context) override;
 };
 
-#endif // INSTRUCTION_H
+#endif
