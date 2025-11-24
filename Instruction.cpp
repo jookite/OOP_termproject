@@ -15,7 +15,7 @@ namespace InstHelper {
         exit(1);
     } 
 
-    // Operand 타입 구분: [Register, Register] AND [Register, Value]
+    // Operand 타입 구분: [Register, Register] OR [Register, Value]
     unsigned char getBinarySrc(VMContext& ctx, const char* name, unsigned char flag, unsigned char src) {
         if (flag == VMDefs::FLAG_REG_REG) return ctx.getRegisterValue(src);
         if (flag == VMDefs::FLAG_REG_VAL) return src;
@@ -49,8 +49,6 @@ namespace InstHelper {
     }
 
 }
-
-
 
 // ======================================================
 // 1. 이항 연산 명령어 (MOV, ADD, SUB, MUL, CMP)
