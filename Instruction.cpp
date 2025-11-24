@@ -15,7 +15,9 @@ namespace InstHelper {
         exit(1);
     } 
 
-    // Operand 타입 구분: [Register, Register] AND [Register, Value]
+    // [Group A] 이항 연산용 (MOV, ADD, SUB...)
+    // 허용: 00(REG_REG), 01(REG_VAL)
+    // 역할: 두 번째 피연산자(Source)의 실제 값을 가져옴
     unsigned char getBinarySrc(VMContext& ctx, const char* name, unsigned char flag, unsigned char src) {
         if (flag == VMDefs::FLAG_REG_REG) return ctx.getRegisterValue(src);
         if (flag == VMDefs::FLAG_REG_VAL) return src;
@@ -49,8 +51,6 @@ namespace InstHelper {
     }
 
 }
-
-
 
 // ======================================================
 // 1. 이항 연산 명령어 (MOV, ADD, SUB, MUL, CMP)
