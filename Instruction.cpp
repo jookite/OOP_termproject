@@ -13,7 +13,7 @@ namespace InstHelper {
         std::cerr << "[Error] " << name << ": 잘못된 피연산자 타입입니다. (Flag: "
             << (int)flag << ")" << std::endl;
         exit(1);
-    }
+    } 
 
     // Operand 타입 구분: [Register, Register] AND [Register, Value]
     unsigned char getBinarySrc(VMContext& ctx, const char* name, unsigned char flag, unsigned char src) {
@@ -49,6 +49,8 @@ namespace InstHelper {
     }
 
 }
+
+
 
 // ======================================================
 // 1. 이항 연산 명령어 (MOV, ADD, SUB, MUL, CMP)
